@@ -143,6 +143,11 @@ if [ -f "/users.json" ]; then
             then
                 echo "${_NAME}:${_PASSWORD}" | chpasswd --encrypted
             fi
+            # more paranoia
+            if [[ ! -z "${_HOME}" && "${_HOME}" != "null" ]];
+            then
+                chmod 750 ${_HOME}
+            fi
         fi
     done
 else
@@ -176,7 +181,7 @@ fi
 
 configure_sftp_only_mode() {
     echo "INFO: configuring sftp only mode"
-    : ${SFTP_CHROOT:="%h"}
+    : ${SFTP_CHROOT:="/home"}
     printf '%s\n' \
         'set /files/etc/ssh/sshd_config/Subsystem/sftp "internal-sftp"' \
         'set /files/etc/ssh/sshd_config/AllowTCPForwarding no' \
@@ -185,6 +190,20 @@ configure_sftp_only_mode() {
         'set /files/etc/ssh/sshd_config/ForceCommand internal-sftp' \
         "set /files/etc/ssh/sshd_config/ChrootDirectory ${SFTP_CHROOT}" \
     | augtool -s 1> /dev/null
+    groupadd sftpuser
+    if [ -f "/users.json" ]; then
+        USERMOD_BIN=$(which usermod)
+        jq -c '.[]' /users.json | while read i; do
+            _NAME=$(echo $i | jq -r  .username)
+            _HOME=$(echo $i | jq -r  .home)
+            $USERMOD_BIN -s '/sbin/nologin' ${_NAME}
+            $USERMOD_BIN -a -G sftpuser ${_NAME}
+            if [[ ! -z "${_HOME}" && "${_HOME}" != "null" && "${_HOME}" != ${SFTP_CHROOT} ]];
+            then
+                chmod 700 ${_HOME}
+            fi
+        done
+    fi
 }
 
 configure_scp_only_mode() {
