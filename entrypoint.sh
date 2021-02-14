@@ -93,43 +93,44 @@ if [ -f "/users.json" ]; then
         _AUTHORIZED_KEYS=$(echo $i | jq -r .authorized_keys)
 
         if [[ ! -z "${_NAME}" && "${_NAME}" != "null" ]];
-            ADDUSER="$USERADD_BIN -r -m"
-            $message=">> Adding user ${_NAME}"
+        then
+            ADDUSER="$USERADD_BIN -r -m -p ''"
+            message=">> Adding user ${_NAME}"
             if [[ ! -z "${_UID}" && "${_UID}" != "null" ]];
             then
-                $message="${message} with uid: ${_UID}"
+                message="${message} with uid: ${_UID}"
                 ADDUSER="$ADDUSER -u ${_UID}"
             fi
             if [[ ! -z "${_GID}" && "${_GID}" != "null" ]];
             then
-                $message="${message}, gid: $_{_GID}"
+                message="${message}, gid: ${_GID}"
                 ADDUSER="$ADDUSER -g ${_GID}"
             fi
             if [[ ! -z "${_HOME}" && "${_HOME}" != "null" ]];
             then
-                $message="${message}, home: ${_HOME}"
+                message="${message}, home: ${_HOME}"
                 ADDUSER="$ADDUSER -d ${_HOME}"
             fi
             if [[ ! -z "${_SHELL}" && "${_SHELL}" != "null" ]];
             then
-                $message="${message}, shell: ${_SHELL}"
+                message="${message}, shell: ${_SHELL}"
                 ADDUSER="$ADDUSER -s ${_SHELL}"
             fi
             if [[ ! -z "${_COMMAND}" && "${_COMMAND}" != "null" ]];
             then
-                $message="${message}, comment: ${_COMMENT}"
+                message="${message}, comment: ${_COMMENT}"
                 ADDUSER="$ADDUSER -c ${_COMMENT}"
             fi
 
             echo $message
 
-            if [ ! -e "/etc/authorized_keys/${_NAME}" ]; 
+            if [ ! -e "/etc/authorized_keys/${_NAME}" ];
             then
                 if [[ ! -z "${_AUTHORIZED_KEYS}" && "${_AUTHORIZED_KEYS}" != "null" ]];
                 then
                     echo -e "${_AUTHORIZED_KEYS}" > /etc/authorized_keys/${_NAME}
                     check_authorized_key_ownership /etc/authorized_keys/${_NAME} ${_UID} ${_GID}
-                else   
+                else
                     echo "WARNING: No SSH authorized_keys found for ${_NAME}!"
                 fi
             else

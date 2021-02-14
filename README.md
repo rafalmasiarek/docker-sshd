@@ -85,11 +85,49 @@ docker run -ti -p 2222:22 \
 ```
 
 ## Usage Example
+Example `/users.json` structure:
+```
+[
+  {
+    "username": "user",
+    "uid": "1000",
+    "gid": "1000",
+    "password": "$6$ntqmipWUYkhoywf2$gwxK4SkfsZwUefgKaqqld.YU9v6Xkvu34gb7D.Se2uCUNwdhzZGtt2OiDUYn0d9cuepXHVkjFndWmrCa9VKJG1",
+    "home": "/home/user"
+  },
+  {
+    "username": "user1",
+    "uid": "1001",
+    "gid": "1001",
+   },
+   {
+     "username": "user2",
+     "uid": "1004",
+     "gid": "1004",
+     "shell": "",
+     "home": "/home/user2custom",
+     "authorized_keys": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCybxGwkYNm8MrPSjJMnASWSaJi1HGsUM+n1ZNyZPkT2R3hb3s30px06ybf2yZZF7XvVO4aX+6Wrn803FZTHD9bOc9V3bXU57wboJURYQCjWrLNbv+wzi6B8H47ESKdOIXQRekoqfehOSMrIhUeyyuuePSwfOZviMD9nFwE51x+H4KdaU5DeEdW9PHcs0JVhjs2AK64d1kRz/hFBo8HiDXb0quZmGV0SYrW1tsgZE4eE2C9pxSrUV05UN7FJ1d/Cc5H9Mi/HMcaNGshTXfxJfP0K258NIYKdJNO/TGkYPKXUnDMwfmr2KP/xDrSAkEFu6mSY/P5Iep73vVbL/J6/q6ZyT0Ql6jxV6dpDTIbuWQHRvPm2ji6X6FMmAuUNP6OH2xTQ5EuOz7o8dW/eEOY5NHR46SPPpCsk10FA7Qco46vhG2yE9lrKC4aB5NnJkSwbcfb0Whf8MCf1Xby/BofpwuLwlmYX72H8mpAZJPtfQTfogyWJ3zZhhDzOFv9NN+LPfKFZaaLgPUiJO7iuAhuFhdm45tcWdGjdjHx8pNepN60Qu9GGLH30oOAZRq6dIgonr8huoIZ1fXVFcsGBmmMfBhh5URKBfU13Pw5A6OyLd7EIsmCRXQCcPsaZNCwRMmg46kCiGXvH0gGNliFBPARhjt6l0GVxh7n+U9DjtWkmUZjbw== deployer"
+  }
+]
+```
 
 The example below will run interactively and bind to port `2222` with default settings like disallow root login and disable authentication by password (accepted only ssh keys). 
 ```
 docker run -ti -p 2222:22 \
   -v $(pwd)/keys/:/etc/authorized_keys \
-  -v $(pwd)/users.json:/users.json
-  rafalmasiareke/sshd:latest
+  -v $(pwd)/users.json:/users.json \
+  rafalmasiarek/sshd:latest
+```
+
+
+If you want entrypoint not to recreate the SSHD keys on every restart, add a volume to them:
+```
+docker volume create sshd_keys
+```
+```
+docker run -ti -p 2222:22 \
+  -v $(pwd)/keys/:/etc/authorized_keys \
+  -v $(pwd)/users.json:/users.json \
+  -v -v sshd_keys:/etc/ssh/keys
+  rafalmasiarek/sshd:latest
 ```

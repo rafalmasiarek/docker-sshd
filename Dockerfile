@@ -12,8 +12,8 @@ RUN apk update && \
 
 EXPOSE 22
 
-COPY entry.sh /entry.sh
+COPY entrypoint.sh /entrypoint.sh
 
-ENTRYPOINT ["/entry.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config"]
