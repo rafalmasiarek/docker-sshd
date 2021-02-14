@@ -141,7 +141,7 @@ if [ -f "/users.json" ]; then
 
             if [[ ! -z "${_PASSWORD}" && "${_PASSWORD}" != "null" ]];
             then
-                echo '${_NAME}:${_PASSWORD}' | chpasswd --encrypted
+                echo "${_NAME}:${_PASSWORD}" | chpasswd --encrypted
             fi
         fi
     done
