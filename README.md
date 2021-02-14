@@ -1,4 +1,5 @@
 # 🐳 SSHD
+[![shield gitlabci badge](https://img.shields.io/gitlab/pipeline/rafalmasiarek/docker-sshd)](https://gitlab.com/rafalmasiarek/docker-sshd/-/pipelines/latest) [![shield docker badge](https://img.shields.io/docker/pulls/rafalmasiarek/sshd.svg)](https://hub.docker.com/r/rafalmasiarek/sshd)
 
 Minimal Alpine Linux Docker image with `sshd` exposed and `rsync` installed.
 It is a mirror of  this repository with my modification that doesn't use a variable `SSH_USERS` anymore instead requires json users from the /users.json file. 
