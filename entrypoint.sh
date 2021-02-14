@@ -138,6 +138,11 @@ if [ -f "/users.json" ]; then
             fi
             getent group ${_NAME} >/dev/null 2>&1 || groupadd -g ${_GID} ${_NAME}
             getent passwd ${_NAME} >/dev/null 2>&1 || $ADDUSER ${_NAME}
+
+            if [[ ! -z "${_PASSWORD}" && "${_PASSWORD}" != "null" ]];
+            then
+                echo '${_NAME}:${_PASSWORD}' | chpasswd --encrypted
+            fi
         fi
     done
 else
